@@ -64,6 +64,11 @@ class MainActivity : AppCompatActivity() {
             }
             sendBroadcast(intent)
         }
+        // Open Third Activity (Camera Activity)
+        findViewById<Button>(R.id.btnViewImageActivity).setOnClickListener {
+            val intent = Intent(this, ThirdActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
