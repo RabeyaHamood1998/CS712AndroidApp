@@ -22,7 +22,7 @@ class MyForegroundService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
-        // ✅ Proof that the SERVICE actually started (not just the button)
+
         Toast.makeText(this, "Service started", Toast.LENGTH_SHORT).show()
 
         val notification: Notification = NotificationCompat.Builder(this, channelId)
@@ -34,11 +34,10 @@ class MyForegroundService : Service() {
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
 
-        // ✅ Start foreground (this should make the notification appear)
         try {
             startForeground(1, notification)
         } catch (e: Exception) {
-            // If Android blocks foreground start for any reason, fail loudly
+
             Toast.makeText(this, "Foreground service blocked: ${e.message}", Toast.LENGTH_LONG).show()
             stopSelf()
         }

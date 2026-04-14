@@ -19,7 +19,6 @@ class MainActivity2 : AppCompatActivity() {
             insets
         }
 
-        // ✅ Button: go back to MainActivity
         val backBtn = findViewById<Button>(R.id.button3)
         backBtn.setOnClickListener {
             finish()
