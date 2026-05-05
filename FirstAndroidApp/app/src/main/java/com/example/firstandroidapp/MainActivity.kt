@@ -13,14 +13,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val ACTION_MY_BROADCAST = "com.example.firstandroidapp.MY_ACTION"
         private const val REQ_POST_NOTIFICATIONS = 1001
+        private const val CUSTOM_PERMISSION = "com.example.firstandroidapp.MSE712"
+        private const val REQ_MSE712 = 1002
     }
 
     private lateinit var receiver: MyBroadcastReceiver
@@ -32,19 +32,17 @@ class MainActivity : AppCompatActivity() {
 
         receiver = MyBroadcastReceiver()
         requestNotificationPermissionIfNeeded()
-        // Explicit Activity
+        requestMSE712PermissionIfNeeded()
+
         findViewById<Button>(R.id.button).setOnClickListener {
-            startActivity(Intent(this, MainActivity2::class.java))
+            openSecondActivityExplicit()
         }
 
-        // Implicit Activity
         findViewById<Button>(R.id.button2).setOnClickListener {
-            startActivity(Intent("com.example.firstandroidapp.OPEN_SECOND"))
+            openSecondActivityImplicit()
         }
 
-        // Start Foreground Service
         findViewById<Button>(R.id.btnStartService).setOnClickListener {
-
             if (!canPostNotifications()) {
                 Toast.makeText(this, "Enable notifications first, then try again", Toast.LENGTH_LONG).show()
                 requestNotificationPermissionIfNeeded()
@@ -55,16 +53,13 @@ class MainActivity : AppCompatActivity() {
             ContextCompat.startForegroundService(this, serviceIntent)
         }
 
-        // Send Broadcast
         findViewById<Button>(R.id.btnSendBroadcast).setOnClickListener {
-
-
             val intent = Intent(ACTION_MY_BROADCAST).apply {
                 setPackage(packageName)
             }
             sendBroadcast(intent)
         }
-        // Open Third Activity (Camera Activity)
+
         findViewById<Button>(R.id.btnViewImageActivity).setOnClickListener {
             val intent = Intent(this, ThirdActivity::class.java)
             startActivity(intent)
@@ -76,7 +71,6 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         val filter = IntentFilter(ACTION_MY_BROADCAST)
 
-        // API 33+ needs a flag
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             ContextCompat.registerReceiver(
                 this,
@@ -94,6 +88,43 @@ class MainActivity : AppCompatActivity() {
         try {
             unregisterReceiver(receiver)
         } catch (_: IllegalArgumentException) {
+        }
+    }
+
+    private fun requestMSE712PermissionIfNeeded() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                CUSTOM_PERMISSION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(CUSTOM_PERMISSION),
+                REQ_MSE712
+            )
+        }
+    }
+
+    private fun hasMSE712Permission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            CUSTOM_PERMISSION
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun openSecondActivityExplicit() {
+        if (hasMSE712Permission()) {
+            startActivity(Intent(this, MainActivity2::class.java))
+        } else {
+            requestMSE712PermissionIfNeeded()
+        }
+    }
+
+    private fun openSecondActivityImplicit() {
+        if (hasMSE712Permission()) {
+            startActivity(Intent("com.example.firstandroidapp.OPEN_SECOND"))
+        } else {
+            requestMSE712PermissionIfNeeded()
         }
     }
 

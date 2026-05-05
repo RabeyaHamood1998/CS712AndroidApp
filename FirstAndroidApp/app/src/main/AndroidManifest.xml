@@ -11,6 +11,11 @@
         </intent>
     </queries>
 
+    <permission
+        android:name="com.example.firstandroidapp.MSE712"
+        android:protectionLevel="dangerous" />
+
+    <uses-permission android:name="com.example.firstandroidapp.MSE712" />
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -33,7 +38,8 @@
 
         <activity
             android:name=".MainActivity2"
-            android:exported="true">
+            android:exported="true"
+            android:permission="com.example.firstandroidapp.MSE712">
             <intent-filter>
                 <action android:name="com.example.firstandroidapp.OPEN_SECOND" />
                 <category android:name="android.intent.category.DEFAULT" />
